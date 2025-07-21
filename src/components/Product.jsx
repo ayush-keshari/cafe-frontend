@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../App";
+import "./product.css"; // Assuming you have a CSS file for styling
 export default function Product() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [products, setProducts] = useState([]);
@@ -28,15 +29,23 @@ export default function Product() {
     }
   };
   return (
-    <div>
+     <div className="product-list">
       {products &&
         products.map((product) => (
-          <div key={product._id}>
-            <img src={`${API_URL}/product.imgUrl`} />
-            <h3>{product.productName}</h3>
-            <p>{product.description}</p>
-            <h4>{product.price}</h4>
-            <button onClick={() => addToCart(product)}>Add to Cart</button>
+          <div className="product-card" key={product._id}>
+            <img
+              className="product-image"
+              // src={`${API_URL}/${product.imgUrl}`}
+                            src={product.imgUrl}
+
+              alt={product.productName}
+            />
+            <div className="product-title">{product.productName}</div>
+            <div className="product-desc">{product.description}</div>
+            <div className="product-price">${product.price}</div>
+            <button className="cta-btn" onClick={() => addToCart(product)}>
+              Add to Cart
+            </button>
           </div>
         ))}
     </div>

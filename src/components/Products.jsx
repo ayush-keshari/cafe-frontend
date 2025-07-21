@@ -34,17 +34,18 @@ export default function Products() {
   useEffect(() => {
     fetchProducts();
   }, [page]);
-  const handleDelete = async (id) => {
-    try {
-      const url = `${API_URL}/api/products/${id}`;
-      const result = await axios.delete(url);
-      setError("User Deleted Successfully");
-      fetchUsers();
-    } catch (err) {
-      console.log(err);
-      setError("Something went wrong");
-    }
-  };
+ 
+const handleDelete = async (id) => {
+  try {
+    const url = `${API_URL}/api/products/${id}`;
+    const result = await axios.delete(url);
+    setError("Product Deleted Successfully");
+    fetchProducts(); // <-- Correct function
+  } catch (err) {
+    console.log(err);
+    setError("Something went wrong");
+  }
+};
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -70,16 +71,15 @@ export default function Products() {
   };
 
   const handleEdit = (product) => {
-    setEditId(user._id);
-    setForm({
-      ...form,
-      productName: product.productName,
-      description: product.description,
-      price: product.price,
-      imgUrl: product.imgUrl,
-    });
-  };
-
+  setEditId(product._id); // <-- Use product._id
+  setForm({
+    ...form,
+    productName: product.productName,
+    description: product.description,
+    price: product.price,
+    imgUrl: product.imgUrl,
+  });
+};
   const handleUpdate = async (e) => {
     e.preventDefault();
     const frm = frmRef.current;

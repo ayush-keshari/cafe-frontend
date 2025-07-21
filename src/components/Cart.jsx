@@ -3,12 +3,15 @@ import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../App";
 import axios from "axios";
+import "./cart.css";
+
 export default function Cart() {
   const { user, cart, setCart } = useContext(AppContext);
   const [orderValue, setOrderValue] = useState(0);
   const [error, setError] = useState();
   const Navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
+
   const increment = (id, qty) => {
     const updatedCart = cart.map((product) =>
       product._id === id ? { ...product, qty: qty + 1 } : product
@@ -41,7 +44,7 @@ export default function Cart() {
         items: cart,
       };
       const result = await axios.post(url, newOrder);
-      setCart([])
+      setCart([]);
       Navigate("/order");
     } catch (err) {
       console.log(err);
@@ -50,34 +53,38 @@ export default function Cart() {
   };
 
   return (
-    <div>
-      <h2>My Cart</h2>
-      {error}
-      {cart &&
-        cart.map(
-          (value) =>
-            value.qty > 0 && (
-              <li key={value._id}>
-                {value.productName}-{value.price}-
-                <button onClick={() => decrement(value._id, value.qty)}>
-                  -
-                </button>
-                {value.qty}
-                <button onClick={() => increment(value._id, value.qty)}>
-                  +
-                </button>
-                -{value.price * value.qty}
-              </li>
-            )
-        )}
-      <h5>Order Value:{orderValue}</h5>
-      <p>
+    <div className="cart-container">
+      <h2 className="cart-title">My Cart</h2>
+      {error && <div className="cart-error">{error}</div>}
+      <ul className="cart-list">
+        {cart &&
+          cart.map(
+            (value) =>
+              value.qty > 0 && (
+                <li className="cart-item" key={value._id}>
+                  <span className="cart-product">{value.productName}</span>
+                  <span className="cart-price">${value.price}</span>
+                  <div className="cart-qty-controls">
+                    <button className="cart-btn" onClick={() => decrement(value._id, value.qty)}>-</button>
+                    <span className="cart-qty">{value.qty}</span>
+                    <button className="cart-btn" onClick={() => increment(value._id, value.qty)}>+</button>
+                  </div>
+                  <span className="cart-total">${value.price * value.qty}</span>
+                </li>
+              )
+          )}
+      </ul>
+      <div className="cart-summary">
+        <span>Order Value:</span>
+        <span className="cart-order-value">${orderValue}</span>
+      </div>
+      <div className="cart-action">
         {user?.token ? (
-          <button onClick={placeOrder}>Place Order</button>
+          <button className="cta-btn" onClick={placeOrder}>Place Order</button>
         ) : (
-          <button onClick={() => Navigate("/login")}>Login to Order</button>
+          <button className="cta-btn" onClick={() => Navigate("/login")}>Login to Order</button>
         )}
-      </p>
+      </div>
     </div>
   );
 }
